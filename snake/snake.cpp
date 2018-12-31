@@ -88,3 +88,43 @@ public:
 
 
 };
+
+/*
+void processSnakeInput(GLFWwindow *window, Snake *snake) {
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+        snake->setXVelocity(-1);
+        std::cout << "left" << std::endl;
+        std::cout << snake->xVelocity << std::endl;
+    }
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+        snake->setXVelocity(1);
+        std::cout << "right" << std::endl;
+        std::cout << snake->xVelocity << std::endl;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+        snake->setYVelocity(-1);
+        std::cout << "up" << std::endl;
+        std::cout << snake->yVelocity << std::endl;
+    }
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+        snake->setYVelocity(1);
+        std::cout << "down" << std::endl;
+        std::cout << snake->yVelocity << std::endl;
+    }
+
+
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        std::cout << "before adding + 1" << std::endl;
+        snake->addToTail();
+        std::cout << "adding + 1" << std::endl;
+        std::cout << "size is now: " << snake->tailLength << std::endl;
+    }
+}
+
+
+        //TODO testing input capturing for small snake game
+        //processSnakeInput(window, snake);
+
+
+ */
