@@ -29,12 +29,12 @@ const char *fragmentShaderSource = "#version 330 core\n"
                                    "   FragColor = vec4(ourColor, 1.0f);\n"
                                    "}\n\0";
 
-class Square {
-    int height;
-    int width;
-    int xPosition;
-    int yPosition;
-};
+//class Square {
+//    int height;
+//    int width;
+//    int xPosition;
+//    int yPosition;
+//};
 
 
 void processInput(GLFWwindow *window) {
@@ -48,6 +48,15 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
+void mouse_button_callback(GLFWwindow *window, int button, int action, int mods) {
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        double xpos, ypos;
+        //getting cursor position
+        glfwGetCursorPos(window, &xpos, &ypos);
+        std::cout << "Cursor Position at (" << xpos << " : " << ypos << std::endl;
+    }
+}
+
 int main() {
 
     // glfw: initialize and configure
@@ -59,14 +68,15 @@ int main() {
 
     // glfw window creation
     // --------------------
-    GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-    if (window == NULL) {
+    GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", nullptr, nullptr);
+    if (window == nullptr) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
         return -1;
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -79,36 +89,36 @@ int main() {
     // build and compile our shader program
     // ------------------------------------
     // vertex shader
-    int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
     glCompileShader(vertexShader);
     // check for shader compile errors
     int success;
     char infoLog[512];
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
     if (!success) {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
     // fragment shader
-    int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
     glCompileShader(fragmentShader);
     // check for shader compile errors
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
     if (!success) {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+        glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog);
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
     // link shaders
-    int shaderProgram = glCreateProgram();
+    GLuint shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
     // check for linking errors
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
     if (!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+        glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
     }
     glDeleteShader(vertexShader);
@@ -119,58 +129,127 @@ int main() {
     // ------------------------------------------------------------------
     float vertices[] = {
             //first row
-            -1.0f, 1.0f, 0.0f,
-            -0.33f, 1.0f, 0.0f,
-            0.33f, 1.0f, 0.0f,
-            1.0f, 1.0f, 0.0f,
+            -1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+            -0.33f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+            0.33f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 
             //second row
-            -1.0f, 0.33f, 0.0f,
-            -0.33f, 0.33f, 0.0f,
-            0.33f, 0.33f, 0.0f,
-            1.0f, 0.33f, 0.0f,
+            -1.0f, 0.33f, 0.0f, 1.0f, 1.0f, 1.0f,
+            -0.33f, 0.33f, 0.0f, 1.0f, 1.0f, 1.0f,
+            0.33f, 0.33f, 0.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 0.33f, 0.0f, 1.0f, 1.0f, 1.0f,
 
             //third row
-            -1.0f, -0.33f, 0.0f,
-            -0.33f, -0.33f, 0.0f,
-            0.33f, -0.33f, 0.0f,
-            1.0f, -0.33f, 0.0f,
+            -1.0f, -0.33f, 0.0f, 1.0f, 1.0f, 1.0f,
+            -0.33f, -0.33f, 0.0f, 1.0f, 1.0f, 1.0f,
+            0.33f, -0.33f, 0.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, -0.33f, 0.0f, 1.0f, 1.0f, 1.0f,
 
             //fourth row
-            -1.0f, -1.0f, 0.0f,
-            -0.33f, -1.0f, 0.0f,
-            0.33f, -1.0f, 0.0f,
-            1.0f, -1.0f, 0.0f,
+            -1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+            -0.33f, -1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+            0.33f, -1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
     };
-    unsigned int indices[] = {  // note that we start from 0!
-
-            4, 5, 6, 7
-
-            //            0, 1, 2, 3,
-//            4, 5, 6, 7,
-//            8, 9, 10, 11,
-//            12, 13, 14, 15,
-//            0, 4, 8, 12,
-//            1, 5, 9, 13,
-//            2, 6, 10, 14,
-//            3, 7, 11, 15
+    unsigned int elements[] = {  // note that we start from 0!
+            0, 1, 5, 4, 65535,
+            1, 2, 6, 5, 65535,
+            2, 3, 7, 6, 65535,
+            4, 5, 9, 8, 65535,
+            5, 6, 10, 9, 65535,
+            6, 7, 11, 10, 65535,
+            8, 9, 13, 12, 65535,
+            9, 10, 14, 13, 65535,
+            10, 11, 15, 14,
     };
+//    unsigned int indices1[] = {  // note that we start from 0!
+//            //sq1
+//            0, 1, 5, 4,
+//    };
+//    unsigned int indices2[] = {
+//            //sq2
+//            1, 2, 6, 5,};
+//    unsigned int indices3[] = {
+//            //sq3
+//            2, 3, 7, 6,};
+//    unsigned int indices4[] = {
+//            //sq4
+//            4, 5, 9, 8,};
+//    unsigned int indices5[] = {
+//            //sq5
+//            5, 6, 10, 9,};
+//    unsigned int indices6[] = {
+//            //sq6
+//            6, 7, 11, 10,};
+//    unsigned int indices7[] = {
+//            //sq7
+//            8, 9, 13, 12,};
+//    unsigned int indices8[] = {
+//            //sq8
+//            9, 10, 14, 13,};
+//    unsigned int indices9[] = {
+//            //sq9
+//            10, 11, 15, 14,};
 
-    unsigned int VBO, VAO, EBO;
+    unsigned int VBO, VAO, EBO; //, EBO1, EBO2, EBO3, EBO4, EBO5, EBO6, EBO7, EBO8, EBO9;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
+//    glGenBuffers(1, &EBO1);
+//    glGenBuffers(1, &EBO2);
+//    glGenBuffers(1, &EBO3);
+//    glGenBuffers(1, &EBO4);
+//    glGenBuffers(1, &EBO5);
+//    glGenBuffers(1, &EBO6);
+//    glGenBuffers(1, &EBO7);
+//    glGenBuffers(1, &EBO8);
+//    glGenBuffers(1, &EBO9);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *) nullptr);
+    glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *) (3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glEnable(GL_PRIMITIVE_RESTART);
+    glPrimitiveRestartIndex(65535);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
-    glEnableVertexAttribArray(0);
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO1);
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices1), indices1, GL_STATIC_DRAW);
+//
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO2);
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices2), indices2, GL_STATIC_DRAW);
+//
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO3);
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices3), indices3, GL_STATIC_DRAW);
+//
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO4);
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices4), indices4, GL_STATIC_DRAW);
+//
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO5);
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices5), indices5, GL_STATIC_DRAW);
+//
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO6);
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices6), indices6, GL_STATIC_DRAW);
+//
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO7);
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices7), indices7, GL_STATIC_DRAW);
+//
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO8);
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices8), indices8, GL_STATIC_DRAW);
+//
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO9);
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices9), indices9, GL_STATIC_DRAW);
+
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -189,12 +268,13 @@ int main() {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // draw our first triangle
+        //glDrawMultiArrays() ???
+
         glUseProgram(shaderProgram);
-        glBindVertexArray(
-                VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        //glDrawArrays(GL_TRIANGLES, 0, 6);
-        glDrawElements(GL_LINES, 64, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(VAO);
+
+        glDrawElements(GL_LINE_LOOP, 44, GL_UNSIGNED_INT, 0);
+//        glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, nullptr);
         // glBindVertexArray(0); // no need to unbind it every time
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -207,7 +287,15 @@ int main() {
     // ------------------------------------------------------------------------
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+//    glDeleteBuffers(1, &EBO1);
+//    glDeleteBuffers(1, &EBO2);
+//    glDeleteBuffers(1, &EBO3);
+//    glDeleteBuffers(1, &EBO4);
+//    glDeleteBuffers(1, &EBO5);
+//    glDeleteBuffers(1, &EBO6);
+//    glDeleteBuffers(1, &EBO7);
+//    glDeleteBuffers(1, &EBO8);
+//    glDeleteBuffers(1, &EBO9);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
