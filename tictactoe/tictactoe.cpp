@@ -333,10 +333,10 @@ int main() {
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices_white), vertices_white);
         glDrawElements(GL_TRIANGLE_FAN, 44, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
+        /*glBindVertexArray(0);
 
         glBindVertexArray(VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);*/
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices_black), vertices_black);
         glDrawElements(GL_LINE_LOOP, 44, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
