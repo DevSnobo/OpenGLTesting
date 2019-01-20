@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include "../Shader.h"
 
 // settings
 const unsigned int SCR_WIDTH = 600;
@@ -104,45 +105,9 @@ int main() {
         return -1;
     }
 
-
     // build and compile our shader program
     // ------------------------------------
-    // vertex shader
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
-    glCompileShader(vertexShader);
-    // check for shader compile errors
-    int success;
-    char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    // fragment shader
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
-    glCompileShader(fragmentShader);
-    // check for shader compile errors
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    // link shaders
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    // check for linking errors
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-    }
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
+    Shader ourShader("../shaders/3.3.shader.vs", "../shaders/3.3.shader.fs");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -327,18 +292,16 @@ int main() {
 
         //glDrawMultiArrays() ???
 
-        glUseProgram(shaderProgram);
+        ourShader.use();
 
         glBindVertexArray(VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices_white), vertices_white);
-        glDrawElements(GL_TRIANGLE_FAN, 44, GL_UNSIGNED_INT, 0);
-        /*glBindVertexArray(0);
 
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);*/
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices_white), vertices_white);
+        glDrawElements(GL_TRIANGLE_FAN, 44, GL_UNSIGNED_INT, nullptr);
+
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices_black), vertices_black);
-        glDrawElements(GL_LINE_LOOP, 44, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_LINE_LOOP, 44, GL_UNSIGNED_INT, nullptr);
         glBindVertexArray(0);
 
         // glBindVertexArray(0); // no need to unbind it every time
