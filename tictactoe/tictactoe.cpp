@@ -185,48 +185,10 @@ int main() {
         0.0f, 0.0f, 0.0f
     };
 
-    /* unsigned int indices1[] = {  // note that we start from 0!
-             //sq1
-             0, 1, 5, 4,
-     };
-     unsigned int indices2[] = {
-             //sq2
-             1, 2, 6, 5,};
-     unsigned int indices3[] = {
-             //sq3
-             2, 3, 7, 6,};
-     unsigned int indices4[] = {
-             //sq4
-             4, 5, 9, 8,};
-     unsigned int indices5[] = {
-             //sq5
-             5, 6, 10, 9,};
-     unsigned int indices6[] = {
-             //sq6
-             6, 7, 11, 10,};
-     unsigned int indices7[] = {
-             //sq7
-             8, 9, 13, 12,};
-     unsigned int indices8[] = {
-             //sq8
-             9, 10, 14, 13,};
-     unsigned int indices9[] = {
-             //sq9
-             10, 11, 15, 14,};*/
-
-    unsigned int VBO, VAO, EBO; //, EBO1, EBO2, EBO3, EBO4, EBO5, EBO6, EBO7, EBO8, EBO9;
+    unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
-    /*glGenBuffers(1, &EBO1);
-    glGenBuffers(1, &EBO2);
-    glGenBuffers(1, &EBO3);
-    glGenBuffers(1, &EBO4);
-    glGenBuffers(1, &EBO5);
-    glGenBuffers(1, &EBO6);
-    glGenBuffers(1, &EBO7);
-    glGenBuffers(1, &EBO8);
-    glGenBuffers(1, &EBO9);*/
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO);
 
@@ -244,33 +206,6 @@ int main() {
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
-
-    /*  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO1);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices1), indices1, GL_STATIC_DRAW);
-
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO2);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices2), indices2, GL_STATIC_DRAW);
-
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO3);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices3), indices3, GL_STATIC_DRAW);
-
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO4);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices4), indices4, GL_STATIC_DRAW);
-
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO5);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices5), indices5, GL_STATIC_DRAW);
-
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO6);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices6), indices6, GL_STATIC_DRAW);
-
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO7);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices7), indices7, GL_STATIC_DRAW);
-
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO8);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices8), indices8, GL_STATIC_DRAW);
-
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO9);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices9), indices9, GL_STATIC_DRAW);*/
 
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
