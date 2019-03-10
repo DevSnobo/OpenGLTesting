@@ -63,11 +63,13 @@ public:
         unsigned int vertex, fragment;
         // vertex shader
         vertex = glCreateShader(GL_VERTEX_SHADER);
+        std::cout << vShaderCode;
         glShaderSource(vertex, 1, &vShaderCode, NULL);
         glCompileShader(vertex);
         checkCompileErrors(vertex, "VERTEX");
         // fragment Shader
         fragment = glCreateShader(GL_FRAGMENT_SHADER);
+        std::cout << fShaderCode;
         glShaderSource(fragment, 1, &fShaderCode, NULL);
         glCompileShader(fragment);
         checkCompileErrors(fragment, "FRAGMENT");

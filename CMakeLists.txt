@@ -17,7 +17,8 @@ add_executable(OpenGLTest glad.c
         #01_GettingStarted/04_HelloTriangle/main2.cpp
 #        01_GettingStarted/05_Shaders/main1.cpp
 #        01_GettingStarted/05_Shaders/main2.cpp
+#        01_GettingStarted/06_Textures/main1.cpp
         tictactoe/tictactoe.cpp
-        Shader.h stb_image.cpp)
+        Shader.h stb_image.cpp )
 
 target_link_libraries(OpenGLTest GL GLU glfw3 X11 Xxf86vm Xrandr pthread Xi dl Xinerama Xcursor assimp)

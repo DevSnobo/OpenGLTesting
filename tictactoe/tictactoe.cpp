@@ -31,14 +31,6 @@ const char *fragmentShaderSource = "#version 330 core\n"
                                    "   FragColor = vec4(ourColor, 1.0f);\n"
                                    "}\n\0";
 
-//class Square {
-//    int height;
-//    int width;
-//    int xPosition;
-//    int yPosition;
-//};
-
-
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
