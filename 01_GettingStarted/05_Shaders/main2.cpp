@@ -48,7 +48,7 @@ int main()
 
     // build and compile our shader program
     // ------------------------------------
-    Shader shader("../shaders/3.3.shader.vs", "../shaders/3.3.shader.fs");
+    Shader shader("../shaders/3.3.sprite.vs", "../shaders/3.3.sprite.fs");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------

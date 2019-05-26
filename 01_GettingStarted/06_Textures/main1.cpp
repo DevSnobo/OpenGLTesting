@@ -47,7 +47,7 @@ int main()
 
     // build and compile our shader zprogram
     // ------------------------------------
-    Shader ourShader("../shaders/0.6.1.shader.vs", "../shaders/0.6.1.shader.fs");
+    Shader ourShader("../shaders/0.6.1.sprite.vs", "../shaders/0.6.1.sprite.fs");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
