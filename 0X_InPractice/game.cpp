@@ -82,7 +82,11 @@ void Game::Update(GLfloat dt) {
         this->ResetPlayer();
     }
     if (this->Levels[this->Level].IsCompleted()) {
-        this->Level += 1;
+        if (this->Level < this->Levels.size() - 1) {
+            this->Level += 1;
+        } else {
+            //TODO: handle end of game
+        }
     }
 }
 

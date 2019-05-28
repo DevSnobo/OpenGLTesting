@@ -70,6 +70,12 @@ int main(int argc, char *argv[])
     // or
     ResourceManager::GetShader("sprite").Use();
 
+    //TODO: add menu
+    //TODO: through menu, add pause mode
+    //TODO: check for end of levels
+    //TODO: reset ball to stuck when level is over
+    //TODO: add counter of current bounces
+    //TODO: add number of remaining bricks to break
     // Start Game within Menu State
     Breakout.State = GAME_ACTIVE;
 
