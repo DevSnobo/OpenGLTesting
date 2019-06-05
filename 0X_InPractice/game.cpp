@@ -13,10 +13,12 @@
 #include "sprite_renderer.h"
 #include "game_object.h"
 #include "ball_object.h"
+#include "text_renderer.h"
 
 
 // Game-related State data
-SpriteRenderer *Renderer;
+SpriteRenderer *sprite_renderer;
+TextRenderer *text_renderer;
 GameObject *Player;
 BallObject *Ball;
 
@@ -25,7 +27,7 @@ Game::Game(GLuint width, GLuint height) : State(GAME_ACTIVE), Keys(), Width(widt
 }
 
 Game::~Game() {
-    delete Renderer;
+    delete sprite_renderer;
     delete Player;
     delete Ball;
 }
@@ -34,20 +36,38 @@ void Game::Init() {
     // Load shaders
     ResourceManager::LoadShader("../0X_InPractice/shaders/sprite.vs", "../0X_InPractice/shaders/sprite.fs", nullptr,
                                 "sprite");
+    ResourceManager::LoadShader("../0X_InPractice/shaders/text.vs", "../0X_InPractice/shaders/text.fs", nullptr,
+                                "text");
     // Configure shaders
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width), static_cast<GLfloat>(this->Height), 0.0f,
-                                      -1.0f, 1.0f);
+    // sprite stuff
+    glm::mat4 sprite_projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width), //
+                                             static_cast<GLfloat>(this->Height), 0.0f, -1.0f, 1.0f);
     ResourceManager::GetShader("sprite").Use().SetInteger("sprite", 0);
-    ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
+    ResourceManager::GetShader("sprite").SetMatrix4("projection", sprite_projection);
+    // text stuff
+    glm::mat4 text_projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width), //
+                                           0.0f, static_cast<GLfloat>(this->Height));
+    ResourceManager::GetShader("text").Use().SetInteger("text", 0);
+    ResourceManager::GetShader("text").SetMatrix4("projection", text_projection);
+
     // Load textures
     ResourceManager::LoadTexture("../0X_InPractice/textures/background.jpg", GL_FALSE, "background");
     ResourceManager::LoadTexture("../0X_InPractice/textures/awesomeface.png", GL_TRUE, "face");
     ResourceManager::LoadTexture("../0X_InPractice/textures/block.png", GL_FALSE, "block");
     ResourceManager::LoadTexture("../0X_InPractice/textures/block_solid.png", GL_FALSE, "block_solid");
     ResourceManager::LoadTexture("../0X_InPractice/textures/paddle.png", true, "paddle");
+
+    // Load texts
+    ResourceManager::LoadText("menu_title", "Menu", 320.0f, 500.0f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+    ResourceManager::LoadText("menu_option_1", "Test Option 1", 320.0f, 400.0f, 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));
+
     // Set render-specific controls
-    Shader shader = ResourceManager::GetShader("sprite");
-    Renderer = new SpriteRenderer(shader);
+    Shader sprite_shader = ResourceManager::GetShader("sprite");
+    sprite_renderer = new SpriteRenderer(sprite_shader);
+
+    Shader text_shader = ResourceManager::GetShader("text");
+    text_renderer = new TextRenderer(text_shader);
+
     // Load levels
     GameLevel one;
     GameLevel two;
@@ -71,22 +91,28 @@ void Game::Init() {
 }
 
 void Game::Update(GLfloat dt) {
-    // Update objects
-    Ball->Move(dt, this->Width);
-    // Check for collisions
-    this->DoCollisions();
+    if (this->State == GAME_ACTIVE) {
+        // Update objects
+        Ball->Move(dt, this->Width);
+        // Check for collisions
+        this->DoCollisions();
 
-    if (Ball->Position.y >= this->Height) // Did ball reach bottom edge?
-    {
-        this->ResetLevel();
-        this->ResetPlayer();
-    }
-    if (this->Levels[this->Level].IsCompleted()) {
-        if (this->Level < this->Levels.size() - 1) {
-            this->Level += 1;
-        } else {
-            //TODO: handle end of game
+        if (Ball->Position.y >= this->Height) // Did ball reach bottom edge?
+        {
+            this->ResetLevel();
+            this->ResetPlayer();
         }
+        if (this->Levels[this->Level].IsCompleted()) {
+            if (this->Level < this->Levels.size() - 1) {
+                this->Level += 1;
+            } else {
+                //TODO: handle end of game
+            }
+            ResetPlayer();
+            Ball->Stuck = true;
+        }
+    } else if (this->State == GAME_MENU) {
+
     }
 }
 
@@ -109,8 +135,11 @@ void Game::ProcessInput(GLfloat dt) {
                     Ball->Position.x += velocity;
             }
         }
-        if (this->Keys[GLFW_KEY_SPACE])
+        if (this->Keys[GLFW_KEY_SPACE]) {
             Ball->Stuck = false;
+        }
+    } else if (this->State == GAME_MENU) {
+        //TODO: menu handling
     }
 }
 
@@ -118,19 +147,33 @@ void Game::Render() {
     if (this->State == GAME_ACTIVE) {
         // Draw background
         Texture2D background = ResourceManager::GetTexture("background");
-        Renderer->DrawSprite(background, glm::vec2(0, 0), glm::vec2(this->Width, this->Height), 0.0f);
+        sprite_renderer->DrawSprite(background, glm::vec2(0, 0), glm::vec2(this->Width, this->Height), 0.0f);
         // Draw level
-        this->Levels[this->Level].Draw(*Renderer);
+        this->Levels[this->Level].Draw(*sprite_renderer);
         // Draw player
-        Player->Draw(*Renderer);
-        Ball->Draw(*Renderer);
+        Player->Draw(*sprite_renderer);
+        Ball->Draw(*sprite_renderer);
+    }
+    if (this->State == GAME_MENU) {
+        Texture2D background = ResourceManager::GetTexture("background");
+        sprite_renderer->DrawSprite(background, glm::vec2(0, 0), glm::vec2(this->Width, this->Height), 0.5f);
+
+        Text text;
+        text = ResourceManager::GetText("menu_title");
+        text_renderer->DrawText(text);
+        text = ResourceManager::GetText("menu_option_1");
+        text_renderer->DrawText(text);
+        //TODO: create menu + handling
+    }
+    if (this->State == GAME_WIN) {
+        //TODO: handle end of game / inbetween levels?
     }
 }
 
 
 void Game::ResetLevel() {
     if (this->Level == 0)
-        this->Levels[0].Load("../0X_InPractice/levels/01.lvl" , this->Width, this->Height * 0.5f);
+        this->Levels[0].Load("../0X_InPractice/levels/01.lvl", this->Width, this->Height * 0.5f);
     else if (this->Level == 1)
         this->Levels[1].Load("../0X_InPractice/levels/02.lvl", this->Width, this->Height * 0.5f);
     else if (this->Level == 2)

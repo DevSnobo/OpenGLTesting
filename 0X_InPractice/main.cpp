@@ -19,6 +19,7 @@
 // GLFW function declerations
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
 
 // The Width of the screen
 const unsigned int SCREEN_WIDTH = 800;
@@ -45,6 +46,7 @@ int main(int argc, char *argv[])
     glfwMakeContextCurrent(window);
     glfwSetKeyCallback(window, key_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, cursor_position_callback);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -59,15 +61,6 @@ int main(int argc, char *argv[])
 
     // Initialize game
     Breakout.Init();
-
-    // DeltaTime variables
-    GLfloat deltaTime = 0.0f;
-    GLfloat lastFrame = 0.0f;
-
-    //Shader shader = ResourceManager::LoadShader("./shaders/sprite.vs", "./shaders/sprite.fs", nullptr, "test");
-    // then use it
-    //shader.Use();
-    // or
     ResourceManager::GetShader("sprite").Use();
 
     //TODO: add menu
@@ -81,13 +74,9 @@ int main(int argc, char *argv[])
 
     while (!glfwWindowShouldClose(window))
     {
-        // Calculate delta time
-        GLfloat currentFrame = glfwGetTime();
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
         glfwPollEvents();
 
-        //deltaTime = 0.001f;
+        GLfloat deltaTime = 0.015f;
         // Manage user input
         Breakout.ProcessInput(deltaTime);
 
@@ -120,8 +109,14 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
     // When a user presses the escape key, we set the WindowShouldClose property to true, closing the application
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    if (Breakout.State == GAME_ACTIVE && key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        Breakout.State = GAME_MENU;
+    } else if (Breakout.State == GAME_MENU && key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        Breakout.State = GAME_ACTIVE;
+    }
+    if (Breakout.State == GAME_MENU && key == GLFW_KEY_Q && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GL_TRUE);
+    }
     if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
@@ -129,5 +124,20 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         else if (action == GLFW_RELEASE)
             Breakout.Keys[key] = GL_FALSE;
     }
+}
+
+void mouse_button_callback(GLFWwindow *window, int button, int action, int mods) {
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        double xpos, ypos;
+        //getting cursor position
+        glfwGetCursorPos(window, &xpos, &ypos);
+
+    }
+}
+
+
+void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
+    //TODO: handle mouse in menu somewhere?
+    glfwGetCursorPos(window, &xpos, &ypos);
 }
 
