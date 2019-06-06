@@ -17,8 +17,8 @@
 #include <stb_image.h>
 
 // Instantiate static variables
-std::map<std::string, Texture2D>    ResourceManager::Textures;
 std::map<std::string, Shader>       ResourceManager::Shaders;
+std::map<std::string, Texture2D>    ResourceManager::Textures;
 std::map<std::string, Text>       ResourceManager::Texts;
 
 Shader ResourceManager::LoadShader(const GLchar *vShaderFile, const GLchar *fShaderFile, const GLchar *gShaderFile,
@@ -27,7 +27,7 @@ Shader ResourceManager::LoadShader(const GLchar *vShaderFile, const GLchar *fSha
     return Shaders[name];
 }
 
-Shader ResourceManager::GetShader(const std::string &name) {
+Shader& ResourceManager::GetShader(const std::string &name) {
     return Shaders[name];
 }
 

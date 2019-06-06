@@ -38,8 +38,8 @@ public:
     static Shader LoadShader(const GLchar *vShaderFile, const GLchar *fShaderFile, const GLchar *gShaderFile,
                              const std::string &name);
 
-    // Retrieves a stored sader
-    static Shader GetShader(const std::string &name);
+    // Retrieves a stored shader
+    static Shader& GetShader(const std::string &name);
 
     // Loads (and generates) a texture from file
     static Texture2D LoadTexture(const GLchar *file, GLboolean alpha, const std::string &name);
