@@ -17,10 +17,7 @@ Renderer::~Renderer() {
 
 void Renderer::Init() {
     sprite_shader = ResourceManager::GetShader("sprite");
-
-    std::cout << "instantiating sprite renderer\n";
     sprite_renderer = new SpriteRenderer(sprite_shader);
-    std::cout << "sprite renderer instantiated\n";
 
     text_shader = ResourceManager::GetShader("text");
     text_renderer = new TextRenderer(text_shader);
@@ -44,9 +41,13 @@ void Renderer::LoadTextures() {
 }
 
 void Renderer::LoadTexts() {
-    // Load texts
+    // Menu texts
     ResourceManager::LoadText("menu_title", "Menu", 320.0f, 500.0f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-    ResourceManager::LoadText("menu_option_1", "Test Option 1", 320.0f, 400.0f, 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));
+    ResourceManager::LoadText("menu_option_1", "Resume", 220.0f, 400.0f, 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+    // Game End texts
+    ResourceManager::LoadText("game_end_win", "YOU WON!", 200.0f, 350.0f, 1.25f, glm::vec3(1.0f, 1.0f, 1.0f));
+    ResourceManager::LoadText("game_end_lose", "GAME OVER!", 160.0f, 350.0f, 1.25f, glm::vec3(1.0f, 0.0f, 0.0f));
 }
 
 void Renderer::LoadLevels(Game *game) {
@@ -76,8 +77,8 @@ void Renderer::PushUniforms(Game *game) {
     ResourceManager::GetShader("text").SetMatrix4("projection", text_projection);
 }
 
-void Renderer::Draw(Texture2D texture, glm::vec2 start, glm::vec2 end, GLfloat alpha) {
-    sprite_renderer->DrawSprite(texture, start, end, alpha);
+void Renderer::Draw(Texture2D &texture, glm::vec2 start, glm::vec2 end, GLfloat rotate) {
+    sprite_renderer->DrawSprite(texture, start, end, rotate);
 }
 
 void Renderer::Draw(Text text) {

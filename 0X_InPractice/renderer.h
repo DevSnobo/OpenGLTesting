@@ -25,12 +25,10 @@ public:
     void LoadTexts();
     void LoadLevels(Game *game);
     void PushUniforms(Game *game);
-    void Draw(Texture2D texture, glm::vec2 start, glm::vec2 end, GLfloat alpha);
+    void Draw(Texture2D &texture, glm::vec2 position, glm::vec2 size, GLfloat rotate);
     void Draw(Text text);
     void Draw(GameObject *object);
     void Draw(GameLevel *level);
-
-private:
 };
 
 #endif //RENDERER_H

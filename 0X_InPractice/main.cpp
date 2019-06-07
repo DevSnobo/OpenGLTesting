@@ -30,14 +30,12 @@ Game Breakout(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 int main(int argc, char *argv[])
 {
-    std::cout << "entering main\n";
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-    std::cout << "entering main\n";
     GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Breakout", nullptr, nullptr);
     if (window == NULL)
     {
@@ -45,7 +43,6 @@ int main(int argc, char *argv[])
         glfwTerminate();
         return -1;
     }
-    std::cout << "entering main\n";
     glfwMakeContextCurrent(window);
     glfwSetKeyCallback(window, key_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -56,7 +53,6 @@ int main(int argc, char *argv[])
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
-    std::cout << "entering main\n";
     // OpenGL configuration
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     glEnable(GL_CULL_FACE);
@@ -74,10 +70,9 @@ int main(int argc, char *argv[])
     //TODO: add counter of current bounces
     //TODO: add number of remaining bricks to break
     // Start Game within Menu State
-    Breakout.State = GAME_MENU;
+    Breakout.State = GAME_ACTIVE;
     GLfloat delta;
     GLfloat lastFrame = 0.0f;
-    std::cout << "entering while\n";
 
     while (!glfwWindowShouldClose(window))
     {

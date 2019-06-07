@@ -20,10 +20,10 @@
 Renderer *renderer;
 GameObject *Player;
 BallObject *Ball;
-Shader text_shader;
 
 Game::Game(GLuint width, GLuint height)
         : State(GAME_ACTIVE), Keys(), Width(width), Height(height), Levels(), Level(0) {
+    renderer = new Renderer();
 }
 
 Game::~Game() {
@@ -107,17 +107,13 @@ void Game::Render() {
         Texture2D background = ResourceManager::GetTexture("background");
         renderer->Draw(background, glm::vec2(0, 0), glm::vec2(this->Width, this->Height), 0.0f);
 
-        //TODO: flip draw call chain, give renderer the objects to draw
-        renderer->Draw(Player);
-        // Draw level
-        //renderer->Draw(&this->Levels[this->Level]);
-        // Draw player
+        renderer->Draw(&this->Levels[this->Level]);
         renderer->Draw(Player);
         renderer->Draw(Ball);
     }
     if (this->State == GAME_MENU) {
         Texture2D background = ResourceManager::GetTexture("background");
-        renderer->Draw(background, glm::vec2(0, 0), glm::vec2(this->Width, this->Height), 0.5f);
+        renderer->Draw(background, glm::vec2(0, 0), glm::vec2(this->Width, this->Height), 0.0f);
 
         Text text;
         text = ResourceManager::GetText("menu_title");
@@ -219,9 +215,9 @@ Collision CheckCollision(BallObject &one, GameObject &two) // AABB - Circle coll
 
     if (glm::length(difference) <
         one.Radius) { // not <= since in that case a collision also occurs when object one exactly touches object two, which they are at the end of each collision resolution stage.
-            return std::make_tuple(GL_TRUE, VectorDirection(difference), difference);
+        return std::make_tuple(GL_TRUE, VectorDirection(difference), difference);
     } else {
-            return std::make_tuple(GL_FALSE, UP, glm::vec2(0, 0));
+        return std::make_tuple(GL_FALSE, UP, glm::vec2(0, 0));
     }
 }
 
