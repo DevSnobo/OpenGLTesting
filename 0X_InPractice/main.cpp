@@ -63,14 +63,32 @@ int main(int argc, char *argv[])
     Breakout.Init();
     ResourceManager::GetShader("sprite").Use();
 
-    //TODO: add menu
-    //TODO: through menu, add pause mode
-    //TODO: check for end of levels
-    //TODO: reset ball to stuck when level is over
-    //TODO: add counter of current bounces
-    //TODO: add number of remaining bricks to break
+    //CATEGORY: Menu
+    //TODO: add menu texts and highlighting
+    //TODO: add keyboard input response to menu
+    //TODO: add support for multiple menus (processInput)
+    // extract to methods that perform switches
+    //TODO: add box rendering
+    //TODO: add box width calculation
+    //TODO: add win screen
+    //TODO: add highscore screen after win screen
+    //IMPROVE: fix variadic template constructor
+    //DONE: add menu
+    //DONE: through menu, add pause mode
+
+    //CATEGORY: Ui
+    //IMPROVE: load texts from file
+
+    //CATEGORY: Game
+    //DONE: check for end of levels
+    //DONE: reset ball to stuck when level is over
+    //DONE: add counter of current bounces
+    //DONE: add number of remaining bricks to break
+
+
     // Start Game within Menu State
     Breakout.State = GAME_ACTIVE;
+    Breakout.ui->setMenuState(MENU_NONE);
     GLfloat delta;
     GLfloat lastFrame = 0.0f;
 
@@ -120,8 +138,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     // When a user presses the escape key, we set the WindowShouldClose property to true, closing the application
     if (Breakout.State == GAME_ACTIVE && key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         Breakout.State = GAME_MENU;
+        Breakout.ui->setMenuState(MENU_MAIN);
+        puts("enter menu state");
     } else if (Breakout.State == GAME_MENU && key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         Breakout.State = GAME_ACTIVE;
+        Breakout.ui->setMenuState(MENU_NONE);
     }
     if (Breakout.State == GAME_MENU && key == GLFW_KEY_Q && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GL_TRUE);

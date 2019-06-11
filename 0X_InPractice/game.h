@@ -17,6 +17,7 @@
 
 #include "game_level.h"
 #include "ball_object.h"
+#include "ui.h"
 
 // Represents the current state of the game
 enum GameState {
@@ -47,15 +48,16 @@ const GLfloat BALL_RADIUS = 12.5f;
 // Game holds all game-related state and functionality.
 // Combines all game-related data into a single class for
 // easy access to each of the components and manageability.
-class Game
-{
+class Game {
 public:
     // Game state
-    GameState              State;
-    GLboolean              Keys[1024];
-    GLuint                 Width, Height;
+    GameState State;
+    GLboolean Keys[1024];
+    GLuint Width, Height;
     std::vector<GameLevel> Levels;
-    GLuint                 Level;
+    GLuint Level;
+    GLuint Lives;
+    Ui *ui;
     // Constructor/Destructor
     Game(GLuint width, GLuint height);
     ~Game();

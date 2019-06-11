@@ -43,10 +43,11 @@ public:
     glm::vec3 text_color{};
     Container *text_container;
 
-    Text(std::string name, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
+    Text(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
     Text();
     ~Text() = default;
     void addContainer(Container con);
+    void setText(std::string new_text);
 };
 
 #endif //TEXT_H

@@ -21,6 +21,7 @@ std::map<std::string, Shader>       ResourceManager::Shaders;
 std::map<std::string, Texture2D>    ResourceManager::Textures;
 std::map<std::string, Text>       ResourceManager::Texts;
 
+//TODO: remove Texts from ResourceManager
 Shader ResourceManager::LoadShader(const GLchar *vShaderFile, const GLchar *fShaderFile, const GLchar *gShaderFile,
                                    const std::string &name) {
     Shaders[name] = loadShaderFromFile(vShaderFile, fShaderFile, gShaderFile);
@@ -42,7 +43,7 @@ Texture2D ResourceManager::GetTexture(const std::string &name) {
 
 Text ResourceManager::LoadText(const std::string &name, const std::string &text, GLfloat x, GLfloat y, GLfloat scale,
                                glm::vec3 color) {
-    Texts[name] = Text(name, text, x, y, scale, color);
+    Texts[name] = Text(text, x, y, scale, color);
     return Texts[name];
 }
 

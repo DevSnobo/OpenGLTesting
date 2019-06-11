@@ -26,6 +26,8 @@ set(SOURCE_FILES glad.c 0X_InPractice/main.cpp
         0X_InPractice/ball_object.cpp
         0X_InPractice/game_level.cpp
         0X_InPractice/menu.cpp
+        0X_InPractice/ui.cpp
+        0X_InPractice/ui_renderer.cpp
         )
 set(CMAKE_CXX_STANDARD 11)
 
@@ -54,6 +56,8 @@ add_executable(OpenGLTest glad.c glm
         0X_InPractice/game_level.h 0X_InPractice/game_level.cpp
         0X_InPractice/ball_object.h 0X_InPractice/ball_object.cpp
         0X_InPractice/menu.h 0X_InPractice/menu.cpp
-        0X_InPractice/renderer.h 0X_InPractice/renderer.cpp)
+        0X_InPractice/renderer.h 0X_InPractice/renderer.cpp
+        0X_InPractice/ui.cpp 0X_InPractice/ui.h
+        0X_InPractice/ui_renderer.cpp 0X_InPractice/ui_renderer.h)
 
 target_link_libraries(OpenGLTest GL GLU glfw3 X11 Xxf86vm Xrandr pthread Xi dl Xinerama Xcursor assimp freetype)

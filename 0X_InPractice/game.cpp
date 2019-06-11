@@ -24,6 +24,8 @@ BallObject *Ball;
 Game::Game(GLuint width, GLuint height)
         : State(GAME_ACTIVE), Keys(), Width(width), Height(height), Levels(), Level(0) {
     renderer = new Renderer();
+    ui = nullptr;
+    Lives = 3;
 }
 
 Game::~Game() {
@@ -46,6 +48,18 @@ void Game::Init() {
 
     glm::vec2 ballPos = playerPos + glm::vec2(PLAYER_SIZE.x / 2 - BALL_RADIUS, -BALL_RADIUS * 2);
     Ball = new BallObject(ballPos, BALL_RADIUS, INITIAL_BALL_VELOCITY, ResourceManager::GetTexture("face"));
+
+    GLuint blocks_remaining = 0;
+    for(GameObject &tile : this->Levels[this->Level].Bricks) {
+        if (!tile.IsSolid && !tile.Destroyed)
+            blocks_remaining++;
+    }
+    ui = new Ui(this->Lives, blocks_remaining);
+
+    renderer->LoadUi(ui);
+    ui->updateLives();
+    ui->updateBlocks();
+    ui->updateBounces();
 }
 
 void Game::Update(GLfloat dt) {
@@ -57,18 +71,23 @@ void Game::Update(GLfloat dt) {
 
         if (Ball->Position.y >= this->Height) // Did ball reach bottom edge?
         {
+            ui->setLives(--this->Lives);
             this->ResetLevel();
             this->ResetPlayer();
+            ui->updateLives();
         }
         if (this->Levels[this->Level].IsCompleted()) {
             if (this->Level < this->Levels.size() - 1) {
                 this->Level += 1;
             } else {
+                //CATEGORY: Game
                 //TODO: handle end of game
+                this->State = GAME_WIN;
             }
             this->ResetPlayer();
             Ball->Stuck = true;
         }
+
     } else if (this->State == GAME_MENU) {
     }
 }
@@ -110,19 +129,17 @@ void Game::Render() {
         renderer->Draw(&this->Levels[this->Level]);
         renderer->Draw(Player);
         renderer->Draw(Ball);
+        renderer->Draw(ui, this->State);
     }
     if (this->State == GAME_MENU) {
         Texture2D background = ResourceManager::GetTexture("background");
         renderer->Draw(background, glm::vec2(0, 0), glm::vec2(this->Width, this->Height), 0.0f);
 
-        Text text;
-        text = ResourceManager::GetText("menu_title");
-        renderer->Draw(text);
-        text = ResourceManager::GetText("menu_option_1");
-        renderer->Draw(text);
+        renderer->Draw(ui, this->State);
         //TODO: create menu + handling
     }
     if (this->State == GAME_WIN) {
+        //CATEGORY: Game
         //TODO: handle end of game / inbetween levels?
     }
 }
@@ -154,6 +171,9 @@ void Game::DoCollisions() {
                 // Destroy block if not solid
                 if (!box.IsSolid) {
                     box.Destroyed = GL_TRUE;
+                    //BLOCKS
+                    ui->decreaseBlocksRemaining();
+                    ui->updateBlocks();
                 }
                 // Collision resolution
                 Direction dir = std::get<1>(collision);
@@ -185,6 +205,9 @@ void Game::DoCollisions() {
 
     Collision result = CheckCollision(*Ball, *Player);
     if (!Ball->Stuck && std::get<0>(result)) {
+        //BOUNCES
+        ui->increasePaddleBounces();
+        ui->updateBounces();
         // Check where it hit the board, and change velocity based on where it hit the board
         GLfloat centerBoard = Player->Position.x + Player->Size.x / 2;
         GLfloat distance = (Ball->Position.x + Ball->Radius) - centerBoard;
