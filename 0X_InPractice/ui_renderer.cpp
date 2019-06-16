@@ -5,7 +5,10 @@
 #include <iostream>
 #include "ui_renderer.h"
 
-GLuint text_VAO, text_VBO;
+#define MENU_HIGHLIGHT_DEFAULT 0.2f
+#define MENU_HIGHLIGHT_SELECTED 0.4f
+
+GLuint text_VAO, text_VBO, quad_VAO, quad_VBO;
 
 UiRenderer::UiRenderer(Shader *box_shader, Shader *text_shader) {
     this->box_shader = box_shader;
@@ -17,7 +20,7 @@ UiRenderer::UiRenderer(Shader *box_shader, Shader *text_shader) {
 
 void UiRenderer::DrawBoxes(Ui *ui, GameState state) {
     if (state == GAME_MENU) {
-        for (std::pair<std::string, Text*> pair : Ui::Menus.at(ui->getMenuState()).Texts) {
+        for (std::pair<std::string, Text *> pair : Ui::Menus.at(ui->getMenuState()).second.Texts) {
             DrawBox(pair.second);
         }
     }
@@ -25,11 +28,11 @@ void UiRenderer::DrawBoxes(Ui *ui, GameState state) {
 
 void UiRenderer::DrawTexts(Ui *ui, GameState state) {
     if (state == GAME_ACTIVE) {
-        for (std::pair<std::string, Text*> pair : Ui::Menus.at(ui->getMenuState()).Texts) {
+        for (std::pair<std::string, Text *> pair : Ui::Menus.at(ui->getMenuState()).second.Texts) {
             DrawText(pair.second);
         }
     } else if (state == GAME_MENU) {
-        for (std::pair<std::string, Text*> pair : Ui::Menus.at(ui->getMenuState()).Texts) {
+        for (std::pair<std::string, Text *> pair : Ui::Menus.at(ui->getMenuState()).second.Texts) {
             DrawText(pair.second);
         }
     }
@@ -79,10 +82,54 @@ void UiRenderer::DrawText(Text *t) {
 }
 
 void UiRenderer::DrawBox(Text *t) {
+    //auto *con = t->text_container;
+
+    if (t->text_container == nullptr) {
+        return;
+    }
     //TODO: shader stuff to draw rectangle + filled rectangles
+    box_shader->Use();
+
+    GLfloat alpha;
+    glm::vec3 color = t->text_container->con_color;
+    if (t->text_is_selected) {
+        alpha = MENU_HIGHLIGHT_SELECTED;
+        //color = color;
+    } else {
+        alpha = MENU_HIGHLIGHT_DEFAULT;
+    }
+
+    glUniform4f(glGetUniformLocation(box_shader->ID, "quad_color"), color.y, color.y, color.z, alpha);
+    glBindVertexArray(quad_VAO);
+
+    GLfloat vertices[6][2] = {
+            {t->text_container->con_x,
+                t->text_container->con_y + t->text_container->getHeight()},
+            {t->text_container->con_x,
+                t->text_container->con_y},
+            {t->text_container->con_x + t->text_container->getWidth(),
+                t->text_container->con_y},
+
+            {t->text_container->con_x + t->text_container->getWidth(),
+                t->text_container->con_y},
+            {t->text_container->con_x + t->text_container->getWidth(),
+                t->text_container->con_y + t->text_container->getHeight()},
+            {t->text_container->con_x,
+                t->text_container->con_y + t->text_container->getHeight()}
+    };
+
+    // Update content of VBO memory
+    glBindBuffer(GL_ARRAY_BUFFER, quad_VBO);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // Render quad
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glBindVertexArray(0);
 }
 
 void UiRenderer::Init() {
+    //text stuff
     glGenVertexArrays(1, &text_VAO);
     glGenBuffers(1, &text_VBO);
     glBindVertexArray(text_VAO);
@@ -92,10 +139,22 @@ void UiRenderer::Init() {
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), nullptr);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    //box stuff
+    glGenVertexArrays(1, &quad_VAO);
+    glGenBuffers(1, &quad_VBO);
+    glBindVertexArray(quad_VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, quad_VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 2, nullptr, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), nullptr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
 
+//IMPROVE: support special characters like Ä Ö Ü ß
 void UiRenderer::initCharacters() {
-// FreeType
+    // FreeType
     FT_Library ft;
     // All functions return a value different than 0 whenever an error occurred
     if (FT_Init_FreeType(&ft)) {
@@ -109,7 +168,7 @@ void UiRenderer::initCharacters() {
     }
 
     // Set size to load glyphs as
-    FT_Set_Pixel_Sizes(face, 0, 60);
+    FT_Set_Pixel_Sizes(face, 0, FONT_SIZE);
 
     // Disable byte-alignment restriction
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

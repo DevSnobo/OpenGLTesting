@@ -11,7 +11,7 @@
 
 #include <cstdarg>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <string>
 #include "text.h"
 
@@ -19,7 +19,7 @@
 //using Enable = void;
 class Menu {
 public:
-    std::map<std::string, Text*> Texts;
+    std::vector<std::pair<std::string, Text*>> Texts;
     std::string menu_title;
 
     /*template <typename T = std::string, typename... U>
@@ -36,7 +36,7 @@ public:
     template <typename T = std::string>
     Menu(std::string title) {
         menu_title = std::move(title);
-        Texts = std::map<std::string, Text*>();
+        Texts = std::vector<std::pair<std::string, Text*>>();
     }
 
     /*template <typename U>
@@ -46,9 +46,10 @@ public:
         }
     }*/
 
+    Menu() = default;
     ~Menu() = default;
 
-    void addText(const std::string& name, Text *text);
+    void addText(const std::pair<std::string, Text*>& in_pair);
 };
 
 #endif //MENU_H

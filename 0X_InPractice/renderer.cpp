@@ -33,6 +33,8 @@ void Renderer::LoadShaders() {
                                 "../0X_InPractice/shaders/sprite.fs", nullptr, "sprite");
     ResourceManager::LoadShader("../0X_InPractice/shaders/text.vs",
                                 "../0X_InPractice/shaders/text.fs", nullptr, "text");
+    ResourceManager::LoadShader("../0X_InPractice/shaders/quad.vs",
+                                "../0X_InPractice/shaders/quad.fs", nullptr, "box");
 }
 
 void Renderer::LoadTextures() {
@@ -57,10 +59,13 @@ void Renderer::LoadTexts() {
 void Renderer::LoadUi(Ui *ui) {
     //IMPROVE: load texts with all properties from file
     Menu *none = new Menu("menu_none");
-    none->addText("game_count_lives", new Text("lives: ___", 15.0f, 55.0f, 0.4f, glm::vec3(1.0f)));
-    none->addText("game_count_remaining", new Text("remaining: ___", 15.0f, 575.0f, 0.4f, glm::vec3(1.0f)));
-    none->addText("game_count_bounce", new Text("bounces: ___", 630.0f, 55.0f, 0.4f, glm::vec3(1.0f)));
-    Ui::Menus.emplace(std::pair<MenuState, Menu>(MENU_NONE, *none));
+    none->addText(std::pair<std::string, Text *>("game_count_lives", new Text("lives: ___", 15.0f, 55.0f, 0.4f, glm::vec3(1.0f))));
+    none->addText(std::pair<std::string, Text *>("game_count_remaining", new Text("remaining: ___", 15.0f, 575.0f, 0.4f, glm::vec3(1.0f))));
+    none->addText(std::pair<std::string, Text *>("game_count_bounce", new Text("bounces: ___", 630.0f, 55.0f, 0.4f, glm::vec3(1.0f))));
+    Ui::Menus.insert(Ui::Menus.end(), std::pair<MenuState, Menu>(MENU_NONE, *none));
+
+    //FIXME: template constructor
+    //TODO: move several "addText()"s into constructor
     Menu *main_menu = new Menu(
             "menu_main"/*,
             Text("menu_main_title", "Main Menu", 320.0f, 500.0f, 1.0f, glm::vec3(1.0f)),
@@ -68,9 +73,19 @@ void Renderer::LoadUi(Ui *ui) {
             Text("menu_main_resume", "Resume", 220.0f, 400.0f, 0.5f, glm::vec3(1.0f)),
             Text("menu_main_resume", "Resume", 220.0f, 400.0f, 0.5f, glm::vec3(1.0f))*/);
 
-    main_menu->addText("menu_main_title", new Text("Main Menu", 220.0f, 500.0f, 1.0f, glm::vec3(1.0f)));
-    main_menu->addText("menu_main_resume", new Text("Resume", 220.0f, 400.0f, 0.5f, glm::vec3(1.0f)));
-    Ui::Menus.emplace(std::pair<MenuState, Menu>(MENU_MAIN, *main_menu));
+    main_menu->addText(std::pair<std::string, Text *>("menu_main_title",
+                                                      new Text("Main Menu", 220.0f, 500.0f, 1.0f, glm::vec3(1.0f))));
+    main_menu->addText(std::pair<std::string, Text *>("menu_main_resume",
+                                                      new Text("Resume", 220.0f, 400.0f, 0.5f, glm::vec3(1.0f), true,
+                                                               new Container(glm::vec3(1.0f), 360.0f))));
+    main_menu->addText(std::pair<std::string, Text *>("menu_main_settings",
+                                                      new Text("Settings", 220.0f, 350.0f, 0.5f, glm::vec3(1.0f),
+                                                               new Container(glm::vec3(1.0f), 360.0f))));
+    main_menu->addText(std::pair<std::string, Text *>("menu_main_exit",
+                                                      new Text("Exit", 220.0f, 300.0f, 0.5f, glm::vec3(1.0f),
+                                                               new Container(glm::vec3(1.0f), 360.0f))));
+
+    Ui::Menus.insert(Ui::Menus.end(), std::pair<MenuState, Menu>(MENU_MAIN, *main_menu));
 }
 
 void Renderer::LoadLevels(Game *game) {
@@ -98,6 +113,11 @@ void Renderer::PushUniforms(Game *game) {
                                            0.0f, static_cast<GLfloat>(game->Height));
     ResourceManager::GetShader("text").Use().SetInteger("text", 0);
     ResourceManager::GetShader("text").SetMatrix4("projection", text_projection);
+    // box stuff
+    glm::mat4 box_projection = glm::ortho(0.0f, static_cast<GLfloat>(game->Width), //
+                                          0.0f, static_cast<GLfloat>(game->Height));
+    ResourceManager::GetShader("box").Use().SetInteger("box", 0);
+    ResourceManager::GetShader("box").SetMatrix4("projection", box_projection);
 }
 
 void Renderer::Draw(Texture2D &texture, glm::vec2 start, glm::vec2 end, GLfloat rotate) {

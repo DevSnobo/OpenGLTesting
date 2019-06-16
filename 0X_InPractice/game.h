@@ -52,12 +52,13 @@ class Game {
 public:
     // Game state
     GameState State;
-    GLboolean Keys[1024];
+    GLuint Keys[1024];
     GLuint Width, Height;
     std::vector<GameLevel> Levels;
     GLuint Level;
     GLuint Lives;
     Ui *ui;
+    GLboolean close = false;
     // Constructor/Destructor
     Game(GLuint width, GLuint height);
     ~Game();
@@ -65,6 +66,9 @@ public:
     void Init();
     // GameLoop
     void ProcessInput(GLfloat dt);
+    void gameInteract(GLfloat dt);
+    void menuNavigate() const;
+    void menuInteract();
     void Update(GLfloat dt);
     void Render();
     void DoCollisions();

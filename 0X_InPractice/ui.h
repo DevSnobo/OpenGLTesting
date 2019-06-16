@@ -6,7 +6,7 @@
 #define UI_H
 
 #include <glad/glad.h>
-#include <map>
+#include <unordered_map>
 #include <ft2build.h>
 #include <vector>
 #include FT_FREETYPE_H
@@ -23,8 +23,7 @@ enum MenuState {
 
 class Ui {
 public:
-    static std::map<MenuState, Menu> Menus;
-    static std::vector<Text*> Texts;
+    static std::vector<std::pair<MenuState, Menu>> Menus;
 
     Ui(GLuint lives, GLuint blocks);
     ~Ui();

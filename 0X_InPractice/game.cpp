@@ -50,9 +50,10 @@ void Game::Init() {
     Ball = new BallObject(ballPos, BALL_RADIUS, INITIAL_BALL_VELOCITY, ResourceManager::GetTexture("face"));
 
     GLuint blocks_remaining = 0;
-    for(GameObject &tile : this->Levels[this->Level].Bricks) {
-        if (!tile.IsSolid && !tile.Destroyed)
+    for (GameObject &tile : this->Levels[this->Level].Bricks) {
+        if (!tile.IsSolid && !tile.Destroyed) {
             blocks_remaining++;
+        }
     }
     ui = new Ui(this->Lives, blocks_remaining);
 
@@ -87,37 +88,121 @@ void Game::Update(GLfloat dt) {
             this->ResetPlayer();
             Ball->Stuck = true;
         }
-
     } else if (this->State == GAME_MENU) {
     }
 }
 
+GLboolean can_change = true;
+GLuint delay_counter = 0;
+
 void Game::ProcessInput(GLfloat dt) {
+    // GAME_ACTIVE
     if (this->State == GAME_ACTIVE) {
-        GLfloat velocity = PLAYER_VELOCITY * dt;
-        // Move playerboard
-        if (this->Keys[GLFW_KEY_A] || this->Keys[GLFW_KEY_LEFT]) {
-            if (Player->Position.x >= 0) {
-                Player->Position.x -= velocity;
-                if (Ball->Stuck) {
-                    Ball->Position.x -= velocity;
-                }
-            }
-        }
-        if (this->Keys[GLFW_KEY_D] || this->Keys[GLFW_KEY_RIGHT]) {
-            if (Player->Position.x <= this->Width - Player->Size.x) {
-                Player->Position.x += velocity;
-                if (Ball->Stuck) {
-                    Ball->Position.x += velocity;
-                }
-            }
-        }
-        if (this->Keys[GLFW_KEY_SPACE]) {
-            Ball->Stuck = false;
-        }
+        gameInteract(dt);
+        // GAME_MENU
     } else if (this->State == GAME_MENU) {
-        //TODO: menu handling
+        menuNavigate();
+        menuInteract();
     }
+}
+
+void Game::gameInteract(GLfloat dt) {
+    GLfloat velocity = PLAYER_VELOCITY * dt;
+    // Move playerboard
+    if (this->Keys[GLFW_KEY_A] == GLFW_PRESS || this->Keys[GLFW_KEY_LEFT] == GLFW_PRESS) {
+        if (Player->Position.x >= 0) {
+            Player->Position.x -= velocity;
+            if (Ball->Stuck) {
+                Ball->Position.x -= velocity;
+            }
+        }
+    }
+    if (this->Keys[GLFW_KEY_D] == GLFW_PRESS || this->Keys[GLFW_KEY_RIGHT] == GLFW_PRESS) {
+        if (Player->Position.x <= this->Width - Player->Size.x) {
+            Player->Position.x += velocity;
+            if (Ball->Stuck) {
+                Ball->Position.x += velocity;
+            }
+        }
+    }
+    if (this->Keys[GLFW_KEY_SPACE] == GLFW_PRESS) {
+        Ball->Stuck = false;
+    }
+
+    if (this->Keys[GLFW_KEY_ESCAPE] == GLFW_PRESS) {
+        this->State = GAME_MENU;
+        ui->setMenuState(MENU_MAIN);
+    }
+}
+
+void Game::menuNavigate() const {
+    if (can_change && (this->Keys[GLFW_KEY_W] == GLFW_PRESS || this->Keys[GLFW_KEY_UP] == GLFW_PRESS)) {
+        for (auto it = Ui::Menus[ui->getMenuState()].second.Texts.begin();
+             it != Ui::Menus[ui->getMenuState()].second.Texts.end(); it++) {
+
+            if (it->second->text_is_selected && it != Ui::Menus[ui->getMenuState()].second.Texts.begin() + 1) {
+                it->second->resetSelected();
+                it = it - 1;
+                it->second->setSelected();
+                break;
+            }
+        }
+        can_change = false;
+    } else if (can_change && (this->Keys[GLFW_KEY_S] == GLFW_PRESS || this->Keys[GLFW_KEY_DOWN] == GLFW_PRESS)) {
+        for (auto it = Ui::Menus[ui->getMenuState()].second.Texts.begin();
+             it != Ui::Menus[ui->getMenuState()].second.Texts.end(); it++) {
+
+            if (it->second->text_is_selected && it != Ui::Menus[ui->getMenuState()].second.Texts.end() - 1) {
+                it->second->resetSelected();
+                it = it + 1;
+                it->second->setSelected();
+                break;
+            }
+        }
+        can_change = false;
+    } else if (this->Keys[GLFW_KEY_W] == GLFW_RELEASE && this->Keys[GLFW_KEY_UP] == GLFW_RELEASE
+               && this->Keys[GLFW_KEY_S] == GLFW_RELEASE && this->Keys[GLFW_KEY_DOWN] == GLFW_RELEASE) {
+        if (delay_counter == 5) {
+            can_change = true;
+            delay_counter = 0;
+        } else {
+            delay_counter++;
+        }
+    }
+}
+
+void Game::menuInteract() {
+    if (can_change && this->Keys[GLFW_KEY_ENTER] == GLFW_PRESS) {
+        for (auto &text : Ui::Menus[ui->getMenuState()].second.Texts) {
+
+            if (text.second->text_is_selected) {
+                if (text.first == "menu_main_resume") {
+                    this->State = GAME_ACTIVE;
+                    ui->setMenuState(MENU_NONE);
+                } else if (text.first == "menu_main_settings") {
+                    //TODO: settings?
+                } else if (text.first == "menu_main_exit") {
+                    this->close = true;
+                }
+                break;
+            }
+        }
+        can_change = false;
+    }
+    //IMPROVE: try to fix the wonkyness with this
+    /*else if (can_change && this->Keys[GLFW_KEY_ESCAPE] == GLFW_PRESS) {
+        this->State = GAME_ACTIVE;
+        ui->setMenuState(MENU_NONE);
+        can_change = false;
+        delay_counter = 0;
+    } else if (this->Keys[GLFW_KEY_ESCAPE] == GLFW_RELEASE) {
+        if (delay_counter == 10) {
+            can_change = true;
+            delay_counter = 0;
+        } else {
+            delay_counter++;
+        }
+    }*/
 }
 
 void Game::Render() {
