@@ -63,3 +63,7 @@ void Ui::setMenuState(MenuState new_state) {
     this->state = new_state;
 }
 
+void Ui::resetBlocks(GLuint new_blocks) {
+    this->blocks_remaining = new_blocks;
+}
+

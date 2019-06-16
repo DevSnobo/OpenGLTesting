@@ -133,14 +133,6 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode) {
-    // When a user presses the escape key, we set the WindowShouldClose property to true, closing the application
-    /*if (Breakout.State == GAME_ACTIVE && key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        Breakout.State = GAME_MENU;
-        Breakout.ui->setMenuState(MENU_MAIN);
-    } else if (Breakout.State == GAME_MENU && key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        Breakout.State = GAME_ACTIVE;
-        Breakout.ui->setMenuState(MENU_NONE);
-    }*/
     if (Breakout.close) {
         glfwSetWindowShouldClose(window, GL_TRUE);
     }

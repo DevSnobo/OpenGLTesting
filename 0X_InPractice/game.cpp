@@ -50,17 +50,23 @@ void Game::Init() {
     Ball = new BallObject(ballPos, BALL_RADIUS, INITIAL_BALL_VELOCITY, ResourceManager::GetTexture("face"));
 
     GLuint blocks_remaining = 0;
-    for (GameObject &tile : this->Levels[this->Level].Bricks) {
-        if (!tile.IsSolid && !tile.Destroyed) {
-            blocks_remaining++;
-        }
-    }
+    blocks_remaining = calcRemaining();
     ui = new Ui(this->Lives, blocks_remaining);
 
     renderer->LoadUi(ui);
     ui->updateLives();
     ui->updateBlocks();
     ui->updateBounces();
+}
+
+GLuint Game::calcRemaining() {
+    GLuint blocks = 0;
+    for (GameObject &tile : Levels[Level].Bricks) {
+        if (!tile.IsSolid && !tile.Destroyed) {
+            blocks++;
+        }
+    }
+    return blocks;
 }
 
 void Game::Update(GLfloat dt) {
@@ -87,6 +93,8 @@ void Game::Update(GLfloat dt) {
             }
             this->ResetPlayer();
             Ball->Stuck = true;
+            ui->resetBlocks(calcRemaining());
+            ui->updateBlocks();
         }
     } else if (this->State == GAME_MENU) {
     }

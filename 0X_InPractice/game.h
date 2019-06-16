@@ -75,6 +75,7 @@ public:
     // Reset
     void ResetLevel();
     void ResetPlayer();
+    GLuint calcRemaining();
 };
 
 #endif

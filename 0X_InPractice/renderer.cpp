@@ -58,43 +58,42 @@ void Renderer::LoadTexts() {
 
 void Renderer::LoadUi(Ui *ui) {
     //IMPROVE: load texts with all properties from file
-    Menu *none = new Menu("menu_none");
-    none->addText(std::pair<std::string, Text *>("game_count_lives", new Text("lives: ___", 15.0f, 55.0f, 0.4f, glm::vec3(1.0f))));
-    none->addText(std::pair<std::string, Text *>("game_count_remaining", new Text("remaining: ___", 15.0f, 575.0f, 0.4f, glm::vec3(1.0f))));
-    none->addText(std::pair<std::string, Text *>("game_count_bounce", new Text("bounces: ___", 630.0f, 55.0f, 0.4f, glm::vec3(1.0f))));
+    Menu *none = new Menu("menu_none",
+                          std::pair<std::string, Text *>("game_count_lives",
+                                                         new Text("lives: ___", 15.0f, 55.0f, 0.4f, glm::vec3(1.0f))),
+                          std::pair<std::string, Text *>("game_count_remaining",
+                                                         new Text("remaining: ___", 15.0f, 575.0f, 0.4f,
+                                                                  glm::vec3(1.0f))),
+                          std::pair<std::string, Text *>("game_count_bounce",
+                                                         new Text("bounces: ___", 630.0f, 55.0f, 0.4f,
+                                                                  glm::vec3(1.0f))));
     Ui::Menus.insert(Ui::Menus.end(), std::pair<MenuState, Menu>(MENU_NONE, *none));
 
-    //FIXME: template constructor
-    //TODO: move several "addText()"s into constructor
     Menu *main_menu = new Menu(
-            "menu_main"/*,
-            Text("menu_main_title", "Main Menu", 320.0f, 500.0f, 1.0f, glm::vec3(1.0f)),
-            Text("menu_main_resume", "Resume", 220.0f, 400.0f, 0.5f, glm::vec3(1.0f)),
-            Text("menu_main_resume", "Resume", 220.0f, 400.0f, 0.5f, glm::vec3(1.0f)),
-            Text("menu_main_resume", "Resume", 220.0f, 400.0f, 0.5f, glm::vec3(1.0f))*/);
-
-    main_menu->addText(std::pair<std::string, Text *>("menu_main_title",
-                                                      new Text("Main Menu", 220.0f, 500.0f, 1.0f, glm::vec3(1.0f))));
-    main_menu->addText(std::pair<std::string, Text *>("menu_main_resume",
-                                                      new Text("Resume", 220.0f, 400.0f, 0.5f, glm::vec3(1.0f), true,
-                                                               new Container(glm::vec3(1.0f), 360.0f))));
-    main_menu->addText(std::pair<std::string, Text *>("menu_main_settings",
-                                                      new Text("Settings", 220.0f, 350.0f, 0.5f, glm::vec3(1.0f),
-                                                               new Container(glm::vec3(1.0f), 360.0f))));
-    main_menu->addText(std::pair<std::string, Text *>("menu_main_exit",
-                                                      new Text("Exit", 220.0f, 300.0f, 0.5f, glm::vec3(1.0f),
-                                                               new Container(glm::vec3(1.0f), 360.0f))));
+            "menu_main",
+            std::pair<std::string, Text *>("menu_main_title",
+                                           new Text("Main Menu", 220.0f, 500.0f, 1.0f, glm::vec3(1.0f))),
+            std::pair<std::string, Text *>("menu_main_resume",
+                                           new Text("Resume", 220.0f, 400.0f, 0.5f, glm::vec3(1.0f), true,
+                                                    new Container(glm::vec3(1.0f), 360.0f))),
+            std::pair<std::string, Text *>("menu_main_settings",
+                                           new Text("Settings", 220.0f, 350.0f, 0.5f, glm::vec3(1.0f),
+                                                    new Container(glm::vec3(1.0f), 360.0f))),
+            std::pair<std::string, Text *>("menu_main_exit", new Text("Exit", 220.0f, 300.0f, 0.5f, glm::vec3(1.0f),
+                                                                      new Container(glm::vec3(1.0f), 360.0f))));
 
     Ui::Menus.insert(Ui::Menus.end(), std::pair<MenuState, Menu>(MENU_MAIN, *main_menu));
 }
 
 void Renderer::LoadLevels(Game *game) {
     // Load levels
-    GameLevel one, two, three, four;
+    GameLevel zero, one, two, three, four;
+    zero.Load("../0X_InPractice/levels/00.lvl", game->Width, game->Height * 0.5);
     one.Load("../0X_InPractice/levels/01.lvl", game->Width, game->Height * 0.5);
     two.Load("../0X_InPractice/levels/02.lvl", game->Width, game->Height * 0.5);
     three.Load("../0X_InPractice/levels/03.lvl", game->Width, game->Height * 0.5);
     four.Load("../0X_InPractice/levels/04.lvl", game->Width, game->Height * 0.5);
+    game->Levels.push_back(zero);
     game->Levels.push_back(one);
     game->Levels.push_back(two);
     game->Levels.push_back(three);

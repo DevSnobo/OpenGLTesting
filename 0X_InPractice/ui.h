@@ -34,6 +34,7 @@ public:
     void updateLives();
     void updateBlocks();
     void updateBounces();
+    void resetBlocks(GLuint new_blocks);
 
     MenuState getMenuState();
     void setMenuState(MenuState state);
